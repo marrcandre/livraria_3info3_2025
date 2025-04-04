@@ -1,37 +1,53 @@
 #!/usr/bin/env python3
+
 import os
-import sys
+import socket
 
 
-def create_files(entidade):
-    print(f'Criando e abrindo arquivos para {entidade}...')
-    # Lista de comandos
-    commands = [
-        f'touch \
-            core/models/{entidade}.py \
-            core/serializers/{entidade}.py \
-            core/views/{entidade}.py',
-        f'code \
-            core/models/{entidade}.py \
-            core/models/__init__.py \
-            core/admin.py \
-            core/serializers/{entidade}.py \
-            core/serializers/__init__.py \
-            core/views/{entidade}.py \
-            core/views/__init__.py \
-            app/urls.py',
-    ]
+# Função para obter o IP do computador
+def get_current_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception as e:
+        print(f'Erro ao obter o IP: {e}')
+        return None
 
-    # Executa cada comando
-    for cmd in commands:
-        os.system(cmd)
+
+# Função para atualizar o arquivo .env com o novo IP
+def update_env_file(ip):
+    try:
+        # Verifica se o arquivo .env existe
+        if not os.path.isfile('.env'):
+            # Cria o arquivo .env se ele não existir
+            with open('.env', 'w') as new_file:
+                new_file.write(f'MY_IP={ip}\n')
+        else:
+            with open('.env', 'r') as file:
+                lines = file.readlines()
+
+            with open('.env', 'w') as file:
+                for line in lines:
+                    if line.startswith('MY_IP='):
+                        continue
+                    else:
+                        file.write(line)
+                file.write(f'MY_IP={ip}\n')
+
+        print(f'IP atualizado no arquivo .env: MY_IP={ip}')
+    except Exception as e:
+        print(f'Erro ao atualizar o arquivo .env: {e}')
+
+
+# Função principal
+def main():
+    ip = get_current_ip()
+    if ip:
+        update_env_file(ip)
 
 
 if __name__ == '__main__':
-    ARG_COUNT = 2
-    if len(sys.argv) != ARG_COUNT:
-        print(f'Uso: python {sys.argv[0]} <parametro>')
-        sys.exit(1)
-
-    parametro = sys.argv[1]
-    create_files(parametro)
+    main()
