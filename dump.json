@@ -280,13 +280,5 @@
     "app_label": "sessions",
     "model": "session"
   }
-},
-{
-  "model": "sessions.session",
-  "pk": "dtoh6sog7quzf573wt1vlzll29u0jpa1",
-  "fields": {
-    "session_data": ".eJxVjDsOwjAQRO_iGln-rJ0sJX3OYHntDQ4gR4qTCnF3CEoBmm7em3mKELe1hK3xEqYszkKL029HMd257iDfYr3OMs11XSaSuyIP2uQwZ35cDvfvoMRWPmu0aCyCAmMBOKLB3CEQee77ZB2SAyTFeuRstetY-ZS0H_U3ZJx4vQG2ezdR:1qwRJy:wZUyjjHSI-Y1PNB3nSp8NRhT4m7Xm_yNWjsieOunVZ8",
-    "expire_date": "2023-11-10T18:12:34.376Z"
-  }
 }
 ]
