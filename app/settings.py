@@ -145,7 +145,7 @@ SPECTACULAR_SETTINGS = {
 AUTH_USER_MODEL = 'core.User'
 
 REST_FRAMEWORK = {
-    # "DEFAULT_AUTHENTICATION_CLASSES": ("core.authentication.TokenAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("core.authentication.TokenAuthentication",),
     "DEFAULT_PERMISSION_CLASSES": (
         # "rest_framework.permissions.IsAuthenticated",
         "rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly",
@@ -157,6 +157,5 @@ REST_FRAMEWORK = {
 
 PASSAGE_APP_ID = os.getenv('PASSAGE_APP_ID', 'app_id')
 PASSAGE_API_KEY = os.getenv('PASSAGE_API_KEY', 'api_key')
-PASSAGE_AUTH_STRATEGY = 2
 
 print(f'{MODE = } \n{MEDIA_URL = } \n{DATABASES = }')
