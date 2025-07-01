@@ -32,6 +32,7 @@ class ItensCompraInline(admin.StackedInline):
     model = ItensCompra
     extra = 1
 
+
 @admin.register(Compra)
 class CompraAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'status')

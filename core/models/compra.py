@@ -15,7 +15,7 @@ class Compra(models.Model):
     status = models.IntegerField(choices=StatusCompra.choices, default=StatusCompra.CARRINHO)
 
     def __str__(self):
-        return f'({self.id}) {self.usuario} {self.status}'
+        return f'({self.id}) {self.usuario} {self.get_status_display()}'
 
 
 class ItensCompra(models.Model):
