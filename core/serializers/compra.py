@@ -6,7 +6,8 @@ from core.models import Compra, ItensCompra
 class ItensCompraSerializer(ModelSerializer):
     class Meta:
         model = ItensCompra
-        fields = '__all__'
+        fields = ('quantidade', 'livro')
+        depth = 2
 
 
 class CompraSerializer(ModelSerializer):
