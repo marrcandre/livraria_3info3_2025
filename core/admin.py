@@ -37,7 +37,6 @@ class ItensCompraInline(admin.StackedInline):
 class CompraAdmin(admin.ModelAdmin):
     list_display = ('usuario', 'status', 'total_formatado')  # mostra na listagem
     ordering = ('usuario', 'status')
-    # search_fields = ('usuario', 'status')
     list_per_page = 10
     inlines = [ItensCompraInline]
     readonly_fields = ("total_formatado",)  # mostra dentro do formulário
