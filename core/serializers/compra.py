@@ -25,8 +25,8 @@ class CompraCreateUpdateSerializer(ModelSerializer):
         return compra
 
     def update(self, compra, validated_data):
-        itens_data = validated_data.pop('itens')
-        if itens_data:
+        itens_data = validated_data.pop('itens', None)
+        if itens_data is not None:
             compra.itens.all().delete()
             for item_data in itens_data:
                 ItensCompra.objects.create(compra=compra, **item_data)
