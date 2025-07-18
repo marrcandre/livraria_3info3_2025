@@ -1,3 +1,4 @@
+from functools import total_ordering
 from rest_framework.serializers import CharField, ModelSerializer, SerializerMethodField
 
 from core.models import Compra, ItensCompra
@@ -31,6 +32,23 @@ class CompraCreateUpdateSerializer(ModelSerializer):
             for item_data in itens_data:
                 ItensCompra.objects.create(compra=compra, **item_data)
         return super().update(compra, validated_data)
+
+
+class ItensCompraListSerializer(ModelSerializer):
+    livro = CharField(source='livro.titulo', read_only=True)
+
+    class Meta:
+        model = ItensCompra
+        fields = ('livro', 'quantidade')
+
+
+class CompraListSerializer(ModelSerializer):
+    usuario = CharField(source='usuario.email', read_only=True)
+    itens = ItensCompraListSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Compra
+        fields = ('id', 'usuario', 'total', 'itens')
 
 
 class ItensCompraSerializer(ModelSerializer):
