@@ -38,6 +38,7 @@ class CompraCreateUpdateSerializer(ModelSerializer):
         itens_data = validated_data.pop('itens')
         compra = Compra.objects.create(**validated_data)
         for item_data in itens_data:
+            item_data['preco'] = item_data['livro'].preco  # preço do livro no momento da compra
             ItensCompra.objects.create(compra=compra, **item_data)
         compra.save()
         return compra
@@ -47,6 +48,7 @@ class CompraCreateUpdateSerializer(ModelSerializer):
         if itens_data:
             compra.itens.all().delete()
             for item_data in itens_data:
+                item_data['preco'] = item_data['livro'].preco  # grava o preço histórico
                 ItensCompra.objects.create(compra=compra, **item_data)
         return super().update(compra, validated_data)
 
@@ -72,11 +74,11 @@ class ItensCompraSerializer(ModelSerializer):
     total = SerializerMethodField()
 
     def get_total(self, instance):
-        return instance.livro.preco * instance.quantidade
+        return instance.preco * instance.quantidade
 
     class Meta:
         model = ItensCompra
-        fields = ('quantidade', 'total', 'livro')
+        fields = ('quantidade', 'preco', 'total', 'livro')
         depth = 2
 
 
