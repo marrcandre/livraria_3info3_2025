@@ -30,4 +30,4 @@ class ItensCompra(models.Model):
     preco = models.DecimalField(max_digits=7, decimal_places=2, default=0)
 
     def __str__(self):
-        return f'({self.id}) {self.livro} {self.quantidade}'
+        return f'({self.id}) {self.livro} {self.quantidade} R$ {self.preco:.2f}'
