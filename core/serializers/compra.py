@@ -1,6 +1,7 @@
 from rest_framework.serializers import (
     CharField,
     CurrentUserDefault,
+    DateTimeField,
     HiddenField,
     ModelSerializer,
     SerializerMethodField,
@@ -13,7 +14,7 @@ from core.models import Compra, ItensCompra
 class ItensCompraCreateUpdateSerializer(ModelSerializer):
     class Meta:
         model = ItensCompra
-        fields = ('livro', 'quantidade')
+        fields = ('livro', 'quantidade', 'preco')
 
     def validate_quantidade(self, quantidade):
         if quantidade <= 0:
@@ -58,7 +59,7 @@ class ItensCompraListSerializer(ModelSerializer):
 
     class Meta:
         model = ItensCompra
-        fields = ('livro', 'quantidade')
+        fields = ('livro', 'quantidade', 'preco')
 
 
 class CompraListSerializer(ModelSerializer):
@@ -85,8 +86,9 @@ class ItensCompraSerializer(ModelSerializer):
 class CompraSerializer(ModelSerializer):
     usuario = CharField(source='usuario.email', read_only=True)
     status = CharField(source='get_status_display', read_only=True)
+    data = DateTimeField(read_only=True)  # novo campo
     itens = ItensCompraSerializer(many=True, read_only=True)
 
     class Meta:
         model = Compra
-        fields = ('id', 'usuario', 'status', 'total', 'itens')
+        fields = ('id', 'usuario', 'status', 'data', 'total', 'itens')
