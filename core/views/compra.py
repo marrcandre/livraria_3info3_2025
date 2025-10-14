@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
@@ -10,9 +11,6 @@ from core.serializers import CompraCreateUpdateSerializer, CompraListSerializer,
 
 
 class CompraViewSet(ModelViewSet):
-    # queryset = Compra.objects.order_by('-id')
-    # serializer_class = CompraSerializer
-
     def get_serializer_class(self):
         if self.action in {'list'}:
             return CompraListSerializer
@@ -27,6 +25,48 @@ class CompraViewSet(ModelViewSet):
         if usuario.groups.filter(name='administradores'):
             return Compra.objects.order_by('-id')
         return Compra.objects.filter(usuario=usuario).order_by('-id')
+
+    @extend_schema(
+        request=None,
+        responses={200: None, 400: None},
+        description="Finaliza a compra, atualizando o estoque dos livros.",
+        summary="Finalizar compra",
+    )
+    @action(detail=True, methods=["post"])
+    def finalizar(self, request, pk=None):
+        compra = self.get_object()
+
+        # Verifica se a compra já foi finalizada
+        if compra.status == Compra.StatusCompra.FINALIZADO:
+            return Response(
+                status=status.HTTP_400_BAD_REQUEST,
+                data={'status': 'Compra já finalizada'}
+            )
+
+        # Garante integridade transacional durante a finalização
+        with transaction.atomic():
+            for item in compra.itens.all():
+
+                # Valida se o estoque é suficiente para cada livro
+                if item.quantidade > item.livro.quantidade:
+                    return Response(
+                        status=status.HTTP_400_BAD_REQUEST,
+                        data={
+                            'status': 'Quantidade insuficiente',
+                            'livro': item.livro.titulo,
+                            'quantidade_disponivel': item.livro.quantidade,
+                        }
+                    )
+
+                # Atualiza o estoque dos livros
+                item.livro.quantidade -= item.quantidade
+                item.livro.save()
+
+            # Finaliza a compra: atualiza status
+            compra.status = Compra.StatusCompra.FINALIZADO
+            compra.save()
+
+        return Response(status=status.HTTP_200_OK, data={'status': 'Compra finalizada'})
 
     @extend_schema(
         summary="Relatório de vendas do mês",
