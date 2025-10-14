@@ -1,11 +1,11 @@
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from drf_spectacular.utils import extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from core.models import Livro
+from core.models import Compra, Livro
 from core.serializers import (
     LivroAlterarPrecoSerializer,
     LivroListSerializer,
@@ -56,7 +56,10 @@ class LivroViewSet(ModelViewSet):
     @action(detail=False, methods=['get'])
     def mais_vendidos(self, request):
         livros = Livro.objects.annotate(
-            total_vendidos=Sum('itens_compra__quantidade')
+            total_vendidos=Sum(
+                'itens_compra__quantidade',
+                filter=Q(itens_compra__compra__status=Compra.StatusCompra.FINALIZADO)
+            )
         ).filter(total_vendidos__gt=10).order_by('-total_vendidos')
 
         serializer = LivroMaisVendidoSerializer(livros, many=True)
