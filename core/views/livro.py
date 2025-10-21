@@ -1,4 +1,5 @@
 from django.db.models import Q, Sum
+from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
@@ -18,6 +19,9 @@ from core.serializers import (
 
 class LivroViewSet(ModelViewSet):
     queryset = Livro.objects.all()
+
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['categoria', 'categoria__descricao', 'editora__nome']  # Campos para filtragem
 
     def get_serializer_class(self):
         if self.action == "list":
