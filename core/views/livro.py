@@ -3,6 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from drf_spectacular.utils import OpenApiResponse, extend_schema
 from rest_framework import status
 from rest_framework.decorators import action
+from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
@@ -20,8 +21,9 @@ from core.serializers import (
 class LivroViewSet(ModelViewSet):
     queryset = Livro.objects.all()
 
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_fields = ['categoria', 'categoria__descricao', 'editora__nome']  # Campos para filtragem
+    search_fields = ['titulo', 'categoria__descricao']  # Campos para busca
 
     def get_serializer_class(self):
         if self.action == "list":
